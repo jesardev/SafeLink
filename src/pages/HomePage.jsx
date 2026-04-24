@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.css";
+import perro from "../assets/perro.jpg";
+import juan from "../assets/juan.jpg";
 
 export default function HomePage() {
     const navigate = useNavigate();
     const [rememberMe, setRememberMe] = useState(true);
 
-    const lucasImage = "/src/assets/perro.jpg";
-    const juanImage = "/src/assets/juan.jpg";
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -75,7 +75,7 @@ export default function HomePage() {
                     >
                         <div className={styles.avatarWrap}>
                             <div className={styles.avatar}>
-                                <img src={lucasImage} alt="Lucas" />
+                                <img src={perro} alt="Lucas" />
                             </div>
                         </div>
 
@@ -152,7 +152,7 @@ export default function HomePage() {
                     >
                         <div className={styles.avatarWrap}>
                             <div className={styles.avatar}>
-                                <img src={juanImage} alt="Mateo" />
+                                <img src={juan} alt="Mateo" />
                             </div>
                         </div>
 
