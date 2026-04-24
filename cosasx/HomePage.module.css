@@ -1,0 +1,311 @@
+:root {
+  --bg: #f4f7ff;
+  --panel: rgba(255, 255, 255, 0.92);
+  --text: #253045;
+  --muted: #6e7688;
+  --line: #d7dcea;
+  --blue: #256cf5;
+  --blue-2: #0f4fc9;
+  --shadow: 0 16px 36px rgba(24, 47, 88, 0.12);
+}
+
+.phone {
+  width: min(430px, 100%);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05)),
+    radial-gradient(circle at 18% 6%, rgba(255,255,255,0.25) 0 14%, transparent 15%),
+    radial-gradient(circle at 78% 10%, rgba(255,255,255,0.18) 0 12%, transparent 13%),
+    linear-gradient(180deg, #9fc0ff 0%, #87aefc 18%, #eef3ff 34%, #f7f8fc 100%);
+  box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.phone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(160deg, rgba(255,255,255,0.18) 0 25%, transparent 26%),
+    linear-gradient(200deg, rgba(255,255,255,0.12) 0 16%, transparent 17%),
+    linear-gradient(145deg, rgba(13,79,202,0.08) 0 14%, transparent 15%);
+  pointer-events: none;
+}
+
+.topbar {
+  position: relative;
+  z-index: 2;
+  padding: 18px 18px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+
+.iconBtn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 14px;
+  transition: transform 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.icon {
+  width: 34px;
+  height: 34px;
+  stroke: white;
+  fill: none;
+  stroke-width: 2.2;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.08));
+  transition: transform 0.22s ease, opacity 0.22s ease, filter 0.22s ease;
+}
+
+.iconBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 18px rgba(15, 32, 77, 0.14);
+  transform: translateY(-1px);
+}
+
+.iconBtn:hover .icon {
+  transform: scale(1.08);
+  opacity: 0.95;
+  filter: drop-shadow(0 3px 8px rgba(0,0,0,0.16));
+}
+
+.header {
+  position: relative;
+  z-index: 2;
+  padding: 28px 22px 16px;
+  color: white;
+}
+
+.title {
+  font-size: clamp(1.8rem, 5vw, 2.2rem);
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.03em;
+  text-shadow: 0 2px 10px rgba(8, 35, 92, 0.12);
+}
+
+.subtitle {
+  margin: 10px 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.92);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  padding: 10px 18px 24px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid rgba(215, 220, 234, 0.96);
+  border-radius: 28px;
+  box-shadow: 0 16px 28px rgba(27, 49, 92, 0.10);
+  backdrop-filter: blur(10px);
+  padding: 18px;
+}
+
+.devicesLabel {
+  margin: 0 0 14px;
+  text-align: center;
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.deviceCard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 112px;
+  border-radius: 22px;
+  padding: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  border: 1px solid #e1e6f1;
+  box-shadow: 0 10px 18px rgba(24, 47, 88, 0.07);
+}
+
+.avatarWrap {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(180deg, #dbe7ff 0%, #9bbaff 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.65);
+  flex: 0 0 auto;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fdfdfd 0%, #eef4ff 100%);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.deviceInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.deviceName {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+}
+
+.deviceLocation {
+  margin: 8px 0 0;
+  font-size: 0.98rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.statusRow {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6a7284;
+  font-size: 0.95rem;
+  flex-wrap: wrap;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #9ea5b5;
+  flex: 0 0 auto;
+}
+
+.battery {
+  margin-left: 4px;
+  width: 30px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.8px solid #17b82d;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.battery::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 4px;
+  width: 2px;
+  height: 6px;
+  border-radius: 0 2px 2px 0;
+  background: #17b82d;
+}
+
+.battery::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 2px;
+  background: #23d33b;
+}
+
+.miniActions {
+  margin-top: 16px;
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.miniAction {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(37, 108, 245, 0.08);
+  border: 1px solid rgba(37, 108, 245, 0.12);
+  box-shadow: 0 8px 14px rgba(24, 47, 88, 0.05);
+  cursor: pointer;
+  transition: transform 0.22s ease, background-color 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.miniAction svg {
+  width: 20px;
+  height: 20px;
+  stroke: #5f6a7f;
+  fill: none;
+  stroke-width: 2.2;
+  transition: transform 0.22s ease, stroke 0.22s ease, fill 0.22s ease;
+}
+
+.miniAction:hover {
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(37, 108, 245, 0.16);
+  border-color: rgba(37, 108, 245, 0.30);
+  box-shadow: 0 12px 18px rgba(24, 47, 88, 0.10);
+}
+
+.miniAction:hover svg {
+  transform: scale(1.08);
+  stroke: #256cf5;
+  fill: #256cf5;
+}
+
+.footerSpace {
+  height: 180px;
+}
+
+@media (max-width: 430px) {
+  .topbar {
+    padding: 16px 16px 6px;
+  }
+
+  .header {
+    padding: 22px 18px 14px;
+  }
+
+  .content {
+    padding: 8px 16px 22px;
+  }
+
+  .panel {
+    border-radius: 26px;
+    padding: 16px;
+  }
+
+  .deviceCard {
+    min-height: 104px;
+  }
+
+  .deviceName {
+    font-size: 1.15rem;
+  }
+
+  .deviceLocation {
+    font-size: 0.95rem;
+  }
+}
