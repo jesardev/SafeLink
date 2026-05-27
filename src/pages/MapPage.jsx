@@ -7,27 +7,37 @@ export default function MapPage() {
     const navigate = useNavigate();
 
     // 👇 UBICACIÓN DINÁMICA
-    const [location, setLocation] = useState(null);
+    const [location, setLocation] = useState({
+        lat: 4.325783,
+        lng: -74.378928,
+    });
 
-    // ==========================================
-    // OBTENER UBICACIÓN DEL BACKEND
-    // ==========================================
+    // ==================================================
+    // OBTENER UBICACIÓN DESDE RENDER
+    // ==================================================
 
     useEffect(() => {
 
-        const interval = setInterval(async () => {
+        const getLocation = async () => {
 
             try {
 
                 const response = await fetch(
-                    "http://localhost:3000/location"
+                    "https://safelink-yi9i.onrender.com/location"
                 );
 
                 const data = await response.json();
 
                 console.log(data);
 
-                setLocation(data);
+                if (data.lat && data.lng) {
+
+                    setLocation({
+                        lat: data.lat,
+                        lng: data.lng,
+                    });
+
+                }
 
             } catch (error) {
 
@@ -35,26 +45,34 @@ export default function MapPage() {
 
             }
 
+        };
+
+        // 👇 PRIMERA CONSULTA
+        getLocation();
+
+        // 👇 ACTUALIZAR CADA 3 SEGUNDOS
+        const interval = setInterval(() => {
+
+            getLocation();
+
         }, 3000);
 
         return () => clearInterval(interval);
 
     }, []);
 
-    // ==========================================
-    // ABRIR GOOGLE MAPS
-    // ==========================================
+    // ==================================================
+    // GOOGLE MAPS
+    // ==================================================
+
+    const destination =
+        `${location.lat},${location.lng}`;
 
     const openDirections = () => {
 
-        if (!location) return;
-
         window.open(
-
-            `https://www.google.com/maps/dir/?api=1&destination=${location.lat},${location.lng}`,
-
+            `https://www.google.com/maps/dir/?api=1&destination=${destination}`,
             "_blank"
-
         );
 
     };
@@ -73,12 +91,14 @@ export default function MapPage() {
                 >
 
                     <svg viewBox="0 0 24 24">
+
                         <path d="M15 18L9 12L15 6" />
+
                     </svg>
 
                 </div>
 
-                {/* LOGO */}
+                {/* CENTRO */}
                 <div className={styles.brand}>
 
                     <span>SafeLink</span>
@@ -95,7 +115,7 @@ export default function MapPage() {
                                 y2="61"
                             >
 
-                                <stop stopColor="#ffffff" />
+                                <stop stopColor="#ffffff"/>
 
                                 <stop
                                     offset="1"
@@ -118,29 +138,17 @@ export default function MapPage() {
             </div>
 
             {/* MAPA */}
-
-            {location ? (
-
-                <iframe
-                    className={styles.map}
-                    src={`https://www.google.com/maps?q=${location.lat},${location.lng}&z=16&output=embed`}
-                ></iframe>
-
-            ) : (
-
-                <p>Cargando ubicación...</p>
-
-            )}
+            <iframe
+                className={styles.map}
+                src={`https://www.google.com/maps?q=${destination}&z=16&output=embed`}
+            ></iframe>
 
             {/* BOTÓN */}
-
             <button
                 className={styles.btn}
                 onClick={openDirections}
             >
-
                 Cómo llegar
-
             </button>
 
         </div>
