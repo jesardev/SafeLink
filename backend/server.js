@@ -1,38 +1,62 @@
 import express from "express";
 import cors from "cors";
+import nodemailer from "nodemailer";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// ======================================
+// UBICACIÓN GPS
+// ======================================
 
-// 👇 UBICACIÓN ACTUAL EN MEMORIA
 let currentLocation = {
     lat: 4.325783,
     lng: -74.378928,
 };
 
+// ======================================
+// ESTADO SOS
+// ======================================
 
-// 👇 RUTA PRINCIPAL
-app.get("/", (req, res) => {
-    res.send("Backend SafeLink funcionando 🚀");
+let sosActive = false;
+
+// ======================================
+// CONFIGURACIÓN GMAIL
+// ======================================
+
+const transporter = nodemailer.createTransport({
+
+    service: "gmail",
+
+    auth: {
+
+        user: "proyectojesgab@gmail.com",
+
+        pass: "mpvx nekw eagq wofm",
+
+    },
+
 });
 
+// ======================================
+// GET UBICACIÓN
+// ======================================
 
-// 👇 GUARDAR UBICACIÓN
+app.get("/location", (req, res) => {
+
+    res.json(currentLocation);
+
+});
+
+// ======================================
+// POST UBICACIÓN
+// ======================================
+
 app.post("/location", (req, res) => {
 
-    const { lat, lng, email } = req.body;
-
-    // SOLO EL TRACKER PUEDE ACTUALIZAR
-    if (email !== "ljesar7@gmail.com") {
-
-        return res.status(403).json({
-            message: "No autorizado",
-        });
-
-    }
+    const { lat, lng } = req.body;
 
     currentLocation = {
         lat,
@@ -47,14 +71,85 @@ app.post("/location", (req, res) => {
 
 });
 
+// ======================================
+// GET SOS
+// ======================================
 
-// 👇 OBTENER UBICACIÓN
-app.get("/location", (req, res) => {
+app.get("/sos", (req, res) => {
 
-    res.json(currentLocation);
+    res.json({
+        active: sosActive,
+    });
 
 });
 
+// ======================================
+// POST SOS
+// ======================================
+
+app.post("/sos", async (req, res) => {
+
+    sosActive = true;
+
+    console.log("🚨 ALERTA SOS ACTIVADA");
+
+    try {
+
+        await transporter.sendMail({
+
+            from: "proyectojesgab@gmail.com",
+
+            to: "proyectojesgab@gmail.com",
+
+            subject: "🚨 ALERTA SOS - SafeLink",
+
+            html: `
+                <h1>🚨 ALERTA SOS ACTIVADA</h1>
+
+                <p>
+                    El usuario ha presionado el botón de emergencia.
+                </p>
+
+                <p>
+                    Revise la ubicación en tiempo real en SafeLink.
+                </p>
+            `,
+
+        });
+
+        console.log("📧 Correo enviado");
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+    res.json({
+        success: true,
+    });
+
+});
+
+// ======================================
+// RESET SOS
+// ======================================
+
+app.post("/reset-sos", (req, res) => {
+
+    sosActive = false;
+
+    console.log("SOS desactivado");
+
+    res.json({
+        success: true,
+    });
+
+});
+
+// ======================================
+// SERVER
+// ======================================
 
 app.listen(3000, () => {
 
