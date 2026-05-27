@@ -4,13 +4,14 @@ import cors from "cors";
 import nodemailer from "nodemailer";
 
 dotenv.config();
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
 // ======================================
-// UBICACIÓN GPS EN MEMORIA
+// UBICACIÓN GPS
 // ======================================
 
 let currentLocation = {
@@ -19,60 +20,68 @@ let currentLocation = {
 };
 
 // ======================================
-// ESTADO SOS EN MEMORIA
+// ESTADO SOS
 // ======================================
 
 let sosActive = false;
 
 // ======================================
-// CONFIGURACIÓN DE CORREO GMAIL
+// TRANSPORTER EMAIL
 // ======================================
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    requireTLS: true,
 
-    // Fuerza IPv4 para evitar errores de IPv6 en Render
-    family: 4,
+    port: 465,
+
+    secure: true,
 
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
     },
 
+    connectionTimeout: 30000,
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
 });
 
 // ======================================
-// RUTA PRINCIPAL
+// ROOT
 // ======================================
 
 app.get("/", (req, res) => {
+
     res.send("Backend SafeLink funcionando 🚀");
+
 });
 
 // ======================================
-// OBTENER UBICACIÓN
+// GET LOCATION
 // ======================================
 
 app.get("/location", (req, res) => {
+
     res.json(currentLocation);
+
 });
 
 // ======================================
-// GUARDAR UBICACIÓN
+// POST LOCATION
 // ======================================
 
 app.post("/location", (req, res) => {
+
     const { lat, lng, email } = req.body;
 
-    // Solo esta cuenta puede enviar ubicación real
+    // SOLO ESTA CUENTA PUEDE COMPARTIR GPS
     if (email !== "ljesar7@gmail.com") {
+
         return res.status(403).json({
             success: false,
-            message: "No autorizado para compartir ubicación",
+            message: "No autorizado",
         });
+
     }
 
     currentLocation = {
@@ -80,46 +89,66 @@ app.post("/location", (req, res) => {
         lng,
     };
 
-    console.log("Nueva ubicación recibida:", currentLocation);
+    console.log("📍 Nueva ubicación:", currentLocation);
 
     res.json({
         success: true,
-        message: "Ubicación actualizada",
         location: currentLocation,
     });
+
 });
 
 // ======================================
-// CONSULTAR ESTADO SOS
+// GET SOS
 // ======================================
 
 app.get("/sos", (req, res) => {
+
     res.json({
         active: sosActive,
     });
+
 });
 
 // ======================================
-// ACTIVAR SOS
+// POST SOS
 // ======================================
 
 app.post("/sos", async (req, res) => {
+
     sosActive = true;
 
     console.log("🚨 ALERTA SOS ACTIVADA");
 
-    // Respondemos rápido al ESP32 / Hoppscotch / frontend
+    // RESPUESTA RÁPIDA
     res.json({
         success: true,
         message: "SOS activado",
     });
 
-    // Después intentamos enviar el correo
+    // DEBUG VARIABLES
+    console.log(
+        "EMAIL_USER existe:",
+        !!process.env.EMAIL_USER
+    );
+
+    console.log(
+        "EMAIL_PASS existe:",
+        !!process.env.EMAIL_PASS
+    );
+
     try {
+
+        console.log("📧 Intentando enviar correo...");
+
         await transporter.sendMail({
+
             from: process.env.EMAIL_USER,
+
             to: "proyectojesgab@gmail.com",
+
             subject: "🚨 ALERTA SOS - SafeLink",
+
             html: `
                 <h1>🚨 ALERTA SOS ACTIVADA</h1>
 
@@ -128,15 +157,14 @@ app.post("/sos", async (req, res) => {
                 </p>
 
                 <p>
-                    Revisa la ubicación en tiempo real desde la plataforma.
-                </p>
-
-                <p>
                     Última ubicación registrada:
                 </p>
 
                 <p>
-                    Latitud: ${currentLocation.lat}<br />
+                    Latitud: ${currentLocation.lat}
+                </p>
+
+                <p>
                     Longitud: ${currentLocation.lng}
                 </p>
 
@@ -148,33 +176,44 @@ app.post("/sos", async (req, res) => {
             `,
         });
 
-        console.log("📧 Correo SOS enviado");
+        console.log("✅ CORREO ENVIADO");
+
     } catch (error) {
-        console.log("Error enviando correo:", error);
+
+        console.log("❌ ERROR ENVIANDO CORREO:");
+
+        console.log(error);
+
     }
+
 });
 
 // ======================================
-// REINICIAR SOS
+// RESET SOS
 // ======================================
 
 app.post("/reset-sos", (req, res) => {
+
     sosActive = false;
 
     console.log("SOS reiniciado");
 
     res.json({
         success: true,
-        message: "SOS reiniciado",
     });
+
 });
 
 // ======================================
-// SERVIDOR
+// SERVER
 // ======================================
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en puerto ${PORT}`);
+
+    console.log(
+        `Servidor corriendo en puerto ${PORT}`
+    );
+
 });
