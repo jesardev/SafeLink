@@ -71,7 +71,7 @@ export const users = [
         image: felipe,
         location: "Panel web",
         status: "Conectado",
-        map: "/mapa2",
+        map: "/mapa",
       },
 
     ],
