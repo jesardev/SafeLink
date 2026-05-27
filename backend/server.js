@@ -1,74 +1,60 @@
 import express from "express";
 import cors from "cors";
-import fs from "fs";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// =====================================
-// GUARDAR UBICACIÓN
-// =====================================
 
+// 👇 UBICACIÓN ACTUAL EN MEMORIA
+let currentLocation = {
+    lat: 4.325783,
+    lng: -74.378928,
+};
+
+
+// 👇 RUTA PRINCIPAL
+app.get("/", (req, res) => {
+    res.send("Backend SafeLink funcionando 🚀");
+});
+
+
+// 👇 GUARDAR UBICACIÓN
 app.post("/location", (req, res) => {
 
-    const { email, lat, lng } = req.body;
+    const { lat, lng, email } = req.body;
 
-    // SOLO ESTA CUENTA PUEDE ENVIAR GPS
-
+    // SOLO EL TRACKER PUEDE ACTUALIZAR
     if (email !== "ljesar7@gmail.com") {
 
         return res.status(403).json({
-            error: "No autorizado"
+            message: "No autorizado",
         });
 
     }
 
-    const data = JSON.parse(
-        fs.readFileSync("./db.json", "utf8")
-    );
-
-    data.locations[email] = {
-
+    currentLocation = {
         lat,
         lng,
-        updatedAt: new Date()
-
     };
 
-    fs.writeFileSync(
-        "./db.json",
-        JSON.stringify(data, null, 2)
-    );
-
-    console.log("Ubicación actualizada:", lat, lng);
+    console.log("Nueva ubicación:", currentLocation);
 
     res.json({
-        success: true
+        success: true,
     });
 
 });
 
-// =====================================
-// OBTENER UBICACIÓN
-// =====================================
 
+// 👇 OBTENER UBICACIÓN
 app.get("/location", (req, res) => {
 
-    const data = JSON.parse(
-        fs.readFileSync("./db.json", "utf8")
-    );
-
-    res.json(
-        data.locations["ljesar7@gmail.com"] || null
-    );
+    res.json(currentLocation);
 
 });
 
-app.get("/", (req, res) => {
-    res.send("Backend SafeLink funcionando 🚀");
-});
 
 app.listen(3000, () => {
 
