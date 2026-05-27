@@ -61,7 +61,7 @@ export const users = [
         name: "Lucas",
         image: perro,
         location: "Fusagasugá, Cundinamarca",
-        status: "Observando ubicación",
+        status: "Conectado",
         map: "/mapa",
       },
 
