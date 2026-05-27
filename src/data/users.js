@@ -62,7 +62,7 @@ export const users = [
         image: juan,
         location: "Monitoreo",
         status: "Observando ubicación",
-        map: "/mapa2",
+        map: "/mapa",
       },
 
       {
