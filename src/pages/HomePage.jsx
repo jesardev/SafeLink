@@ -35,7 +35,7 @@ export default function HomePage() {
                     try {
 
                         await fetch(
-                            "http://localhost:3000/location",
+                            "https://safelink-yi9i.onrender.com/location",
                             {
 
                                 method: "POST",
