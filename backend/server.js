@@ -129,8 +129,7 @@ app.post("/sos", async (req, res) => {
             from:
                 "SafeLink <onboarding@resend.dev>",
 
-            to:
-                "proyectojesgab@gmail.com",
+            to: "jesar.dev@gmail.com",
 
             subject:
                 "🚨 ALERTA SOS - SafeLink",
