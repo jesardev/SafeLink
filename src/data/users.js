@@ -58,9 +58,9 @@ export const users = [
 
       {
         id: 1,
-        name: "Panel principal",
-        image: juan,
-        location: "Monitoreo",
+        name: "Lucas",
+        image: lucas,
+        location: "Fusagasugá, Cundinamarca",
         status: "Observando ubicación",
         map: "/mapa",
       },
@@ -68,8 +68,8 @@ export const users = [
       {
         id: 2,
         name: "Felipe",
-        image: felipe,
-        location: "Panel web",
+        image: perro,
+        location: "Fusagasugá, Cundinamarca",
         status: "Conectado",
         map: "/mapa2",
       },
