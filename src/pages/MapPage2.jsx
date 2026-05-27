@@ -4,7 +4,7 @@ import styles from "./MapPage.module.css";
 
 export default function MapPage2() {
     const navigate = useNavigate();
-  const destination = "4.337824, -74.369206";
+  const destination = "4.325783, -74.378928";
 
   const openDirections = () => {
     window.open(
