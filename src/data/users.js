@@ -59,7 +59,7 @@ export const users = [
       {
         id: 1,
         name: "Lucas",
-        image: lucas,
+        image: perro,
         location: "Fusagasugá, Cundinamarca",
         status: "Observando ubicación",
         map: "/mapa",
@@ -68,7 +68,7 @@ export const users = [
       {
         id: 2,
         name: "Felipe",
-        image: perro,
+        image: lucas,
         location: "Fusagasugá, Cundinamarca",
         status: "Conectado",
         map: "/mapa2",
