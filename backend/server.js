@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // ======================================
-// UBICACIÓN GPS
+// UBICACIÓN GPS EN MEMORIA
 // ======================================
 
 let currentLocation = {
@@ -17,142 +17,163 @@ let currentLocation = {
 };
 
 // ======================================
-// ESTADO SOS
+// ESTADO SOS EN MEMORIA
 // ======================================
 
 let sosActive = false;
 
 // ======================================
-// CONFIGURACIÓN GMAIL
+// CONFIGURACIÓN DE CORREO GMAIL
 // ======================================
 
 const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    requireTLS: true,
 
-    service: "gmail",
+    // Fuerza IPv4 para evitar errores de IPv6 en Render
+    family: 4,
 
     auth: {
-
-        user: "proyectojesgab@gmail.com",
-
-        pass: "mpvx nekw eagq wofm",
-
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
 
+    connectionTimeout: 10000,
 });
 
 // ======================================
-// GET UBICACIÓN
+// RUTA PRINCIPAL
+// ======================================
+
+app.get("/", (req, res) => {
+    res.send("Backend SafeLink funcionando 🚀");
+});
+
+// ======================================
+// OBTENER UBICACIÓN
 // ======================================
 
 app.get("/location", (req, res) => {
-
     res.json(currentLocation);
-
 });
 
 // ======================================
-// POST UBICACIÓN
+// GUARDAR UBICACIÓN
 // ======================================
 
 app.post("/location", (req, res) => {
+    const { lat, lng, email } = req.body;
 
-    const { lat, lng } = req.body;
+    // Solo esta cuenta puede enviar ubicación real
+    if (email !== "ljesar7@gmail.com") {
+        return res.status(403).json({
+            success: false,
+            message: "No autorizado para compartir ubicación",
+        });
+    }
 
     currentLocation = {
         lat,
         lng,
     };
 
-    console.log("Nueva ubicación:", currentLocation);
+    console.log("Nueva ubicación recibida:", currentLocation);
 
     res.json({
         success: true,
+        message: "Ubicación actualizada",
+        location: currentLocation,
     });
-
 });
 
 // ======================================
-// GET SOS
+// CONSULTAR ESTADO SOS
 // ======================================
 
 app.get("/sos", (req, res) => {
-
     res.json({
         active: sosActive,
     });
-
 });
 
 // ======================================
-// POST SOS
+// ACTIVAR SOS
 // ======================================
 
 app.post("/sos", async (req, res) => {
-
     sosActive = true;
 
     console.log("🚨 ALERTA SOS ACTIVADA");
 
+    // Respondemos rápido al ESP32 / Hoppscotch / frontend
+    res.json({
+        success: true,
+        message: "SOS activado",
+    });
+
+    // Después intentamos enviar el correo
     try {
-
         await transporter.sendMail({
-
-            from: "proyectojesgab@gmail.com",
-
+            from: process.env.EMAIL_USER,
             to: "proyectojesgab@gmail.com",
-
             subject: "🚨 ALERTA SOS - SafeLink",
-
             html: `
                 <h1>🚨 ALERTA SOS ACTIVADA</h1>
 
                 <p>
-                    El usuario ha presionado el botón de emergencia.
+                    Se ha presionado el botón físico del dispositivo SafeLink.
                 </p>
 
                 <p>
-                    Revise la ubicación en tiempo real en SafeLink.
+                    Revisa la ubicación en tiempo real desde la plataforma.
+                </p>
+
+                <p>
+                    Última ubicación registrada:
+                </p>
+
+                <p>
+                    Latitud: ${currentLocation.lat}<br />
+                    Longitud: ${currentLocation.lng}
+                </p>
+
+                <p>
+                    <a href="https://www.google.com/maps?q=${currentLocation.lat},${currentLocation.lng}">
+                        Ver ubicación en Google Maps
+                    </a>
                 </p>
             `,
-
         });
 
-        console.log("📧 Correo enviado");
-
+        console.log("📧 Correo SOS enviado");
     } catch (error) {
-
-        console.log(error);
-
+        console.log("Error enviando correo:", error);
     }
-
-    res.json({
-        success: true,
-    });
-
 });
 
 // ======================================
-// RESET SOS
+// REINICIAR SOS
 // ======================================
 
 app.post("/reset-sos", (req, res) => {
-
     sosActive = false;
 
-    console.log("SOS desactivado");
+    console.log("SOS reiniciado");
 
     res.json({
         success: true,
+        message: "SOS reiniciado",
     });
-
 });
 
 // ======================================
-// SERVER
+// SERVIDOR
 // ======================================
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
 
-    console.log("Servidor corriendo en puerto 3000");
-
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en puerto ${PORT}`);
 });
